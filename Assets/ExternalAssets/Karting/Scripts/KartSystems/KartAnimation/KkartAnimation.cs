@@ -82,7 +82,7 @@ namespace KartGame.KartSystems
 
             // Update position and rotation from WheelCollider
             UpdateWheelFromCollider(frontLeftWheel);
-            //UpdateWheelFromCollider(frontRightWheel);
+            UpdateWheelFromCollider(frontRightWheel);
             UpdateWheelFromCollider(rearLeftWheel);
             UpdateWheelFromCollider(rearRightWheel);
         }

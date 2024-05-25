@@ -1,11 +1,10 @@
 using System;
 using UnityEngine;
-using UnityEngine.Animations;
 
 namespace KartGame.KartSystems
 {
     [DefaultExecutionOrder(100)]
-    public class CarrinhoAnimatorScript : MonoBehaviour
+    public class RolimaAnimation : MonoBehaviour
     {
         [Serializable]
         public class Wheel
@@ -62,6 +61,7 @@ namespace KartGame.KartSystems
 
 
         float m_SmoothedSteeringInput;
+        float auxRotacao;
 
         void Start()
         {
@@ -83,11 +83,14 @@ namespace KartGame.KartSystems
             frontLeftWheel.wheelCollider.steerAngle = rotationAngle;
             frontRightWheel.wheelCollider.steerAngle = rotationAngle;
 
-            //frontAxis.axisTransform.Rotate(new Vector3(), rotationAngle);
+            rotationAngle = Math.Clamp(rotationAngle, -30f, 30f);
+
+            frontAxis.axisTransform.rotation = Quaternion.Euler(new Vector3(0f, rotationAngle, 0f));
+            //frontAxis.axisTransform.localRotation.SetEulerAngles()
 
             // Update position and rotation from WheelCollider
-            UpdateWheelFromCollider(frontLeftWheel);
-            UpdateWheelFromCollider(frontRightWheel);
+            //UpdateWheelFromCollider(frontLeftWheel);
+            //UpdateWheelFromCollider(frontRightWheel);
             UpdateWheelFromCollider(rearLeftWheel);
             UpdateWheelFromCollider(rearRightWheel);
 
@@ -97,8 +100,8 @@ namespace KartGame.KartSystems
         void LateUpdate()
         {
             // Update position and rotation from WheelCollider
-            UpdateWheelFromCollider(frontLeftWheel);
-            UpdateWheelFromCollider(frontRightWheel);
+            //UpdateWheelFromCollider(frontLeftWheel);
+            //UpdateWheelFromCollider(frontRightWheel);
             UpdateWheelFromCollider(rearLeftWheel);
             UpdateWheelFromCollider(rearRightWheel);
 
@@ -109,10 +112,10 @@ namespace KartGame.KartSystems
         {
             wheel.wheelCollider.GetWorldPose(out Vector3 position, out Quaternion rotation);
             wheel.wheelTransform.position = position;
-            wheel.wheelTransform.rotation = rotation;   
+            wheel.wheelTransform.rotation = rotation;
         }
 
-        void UpdateAxisFromWheel(Wheel wheel, KartAxis axis) 
+        void UpdateAxisFromWheel(Wheel wheel, KartAxis axis)
         {
             wheel.wheelCollider.GetWorldPose(out Vector3 position, out Quaternion rotation);
             axis.axisTransform.rotation = rotation;
