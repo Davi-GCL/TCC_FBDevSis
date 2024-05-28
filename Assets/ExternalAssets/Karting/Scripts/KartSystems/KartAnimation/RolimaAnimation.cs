@@ -48,10 +48,15 @@ namespace KartGame.KartSystems
         [Space]
         [Tooltip("The maximum angle in degrees that the front wheels can be turned away from their default positions, when the Steering input is either 1 or -1.")]
         public float maxSteeringAngle;
+
+        [Space]
+        [Tooltip("The maximum angle in degrees that the front wheels can be turned away from their default positions, when the Steering input is either 1 or -1.")]
+        public float maxSteeringAngleAxis = 30f;
+
         [Tooltip("Information referring to the front left wheel of the kart.")]
-        public Wheel frontLeftWheel;
+        public Wheel? frontLeftWheel;
         [Tooltip("Information referring to the front right wheel of the kart.")]
-        public Wheel frontRightWheel;
+        public Wheel? frontRightWheel;
         [Tooltip("Information referring to the rear left wheel of the kart.")]
         public Wheel rearLeftWheel;
         [Tooltip("Information referring to the rear right wheel of the kart.")]
@@ -65,10 +70,10 @@ namespace KartGame.KartSystems
 
         void Start()
         {
-            frontLeftWheel.Setup();
-            frontRightWheel.Setup();
-            rearLeftWheel.Setup();
-            rearRightWheel.Setup();
+            frontLeftWheel?.Setup();
+            frontRightWheel?.Setup();
+            rearLeftWheel?.Setup();
+            rearRightWheel?.Setup();
             frontAxis.Setup();
         }
 
@@ -83,10 +88,11 @@ namespace KartGame.KartSystems
             frontLeftWheel.wheelCollider.steerAngle = rotationAngle;
             frontRightWheel.wheelCollider.steerAngle = rotationAngle;
 
-            rotationAngle = Math.Clamp(rotationAngle, -30f, 30f);
+            float rotationAngleAxis = m_SmoothedSteeringInput * maxSteeringAngleAxis;
+            rotationAngleAxis = Math.Clamp(rotationAngleAxis, -30f, 30f);
 
-            frontAxis.axisTransform.rotation = Quaternion.Euler(new Vector3(0f, rotationAngle, 0f));
-            //frontAxis.axisTransform.localRotation.SetEulerAngles()
+            frontAxis.axisTransform.localRotation = Quaternion.Euler(new Vector3(0f, rotationAngleAxis, 0f));
+            //frontAxis.axisTransform.localRotation.SetEulerAngles();
 
             // Update position and rotation from WheelCollider
             //UpdateWheelFromCollider(frontLeftWheel);

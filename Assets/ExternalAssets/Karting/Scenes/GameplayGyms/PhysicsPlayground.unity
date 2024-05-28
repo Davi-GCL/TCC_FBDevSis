@@ -17991,6 +17991,7 @@ MonoBehaviour:
   kartController: {fileID: 4895846114427946339}
   steeringAnimationDamping: 10
   maxSteeringAngle: 30
+  maxSteeringAngleAxis: 30
   frontLeftWheel:
     wheelTransform: {fileID: 140013327}
     wheelCollider: {fileID: 4895846115935773215}
