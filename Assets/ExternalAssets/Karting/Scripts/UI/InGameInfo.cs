@@ -8,17 +8,18 @@ namespace KartGame.UI
     {
         public TextMeshProUGUI Speed;
         public bool AutoFindKart = true;
-        public ArcadeKart KartController;
+        public ArcadeRolima RolimaController;
+
 
         void Start()
         {
             if (AutoFindKart)
             {
-                ArcadeKart kart = FindObjectOfType<ArcadeKart>();
-                KartController = kart;
+                ArcadeRolima foundKart = FindObjectOfType<ArcadeRolima>();
+                RolimaController = foundKart;
             }
 
-            if (!KartController)
+            if (!RolimaController)
             {
                 gameObject.SetActive(false);
             }
@@ -27,7 +28,7 @@ namespace KartGame.UI
         // Update is called once per frame
         void Update()
         {
-            float speed = KartController.Rigidbody.velocity.magnitude;
+            float speed = RolimaController.Rigidbody.velocity.magnitude;
             Speed.text = string.Format($"{Mathf.FloorToInt(speed * 3.6f)} km/h");
             Speed.text += string.Format($"\n{speed:0.0} m/s");
         }

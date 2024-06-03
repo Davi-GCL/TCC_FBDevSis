@@ -39,7 +39,7 @@ namespace KartGame.KartSystems
         }
 
         [Tooltip("What kart do we want to listen to?")]
-        public ArcadeKart kartController;
+        public ArcadeRolima kartController;
 
         [Space]
         [Tooltip("The damping for the appearance of steering compared to the input.  The higher the number the less damping.")]
