@@ -1,22 +1,22 @@
-﻿using System;
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.VFX;
 
 namespace KartGame.KartSystems
 {
-    public class ArcadeKart : MonoBehaviour, IArcadeKart
+    public class ArcadeRolima : MonoBehaviour, IArcadeKart
     {
-        [System.Serializable]
+        [Serializable]
         public class StatPowerup
         {
-            public ArcadeKart.Stats modifiers;
+            public ArcadeRolima.Stats modifiers;
             public string PowerUpID;
             public float ElapsedTime;
             public float MaxTime;
         }
 
-        [System.Serializable]
+        [Serializable]
         public struct Stats
         {
             [Header("Movement Settings")]
@@ -26,7 +26,7 @@ namespace KartGame.KartSystems
             [Tooltip("How quickly the kart reaches top speed.")]
             public float Acceleration;
 
-            [Min(0.001f), Tooltip("Top speed attainable when moving backward.")]
+            [Tooltip("Top speed attainable when moving backward.")]
             public float ReverseSpeed;
 
             [Tooltip("How quickly the kart reaches top speed, when moving backward.")]
@@ -76,7 +76,7 @@ namespace KartGame.KartSystems
         public float AirPercent { get; private set; }
         public float GroundPercent { get; private set; }
 
-        public ArcadeKart.Stats baseStats = new ArcadeKart.Stats
+        public ArcadeRolima.Stats baseStats = new ArcadeRolima.Stats
         {
             TopSpeed = 10f,
             Acceleration = 5f,
@@ -173,7 +173,7 @@ namespace KartGame.KartSystems
         // can the kart move?
         bool m_CanMove = true;
         List<StatPowerup> m_ActivePowerupList = new List<StatPowerup>();
-        ArcadeKart.Stats m_FinalStats;
+        ArcadeRolima.Stats m_FinalStats;
 
         Quaternion m_LastValidRotation;
         Vector3 m_LastValidPosition;
@@ -455,7 +455,16 @@ namespace KartGame.KartSystems
             if (wasOverMaxSpeed && !isBraking)
                 movement *= 0.0f;
 
-            Vector3 newVelocity = Rigidbody.velocity + movement * Time.fixedDeltaTime;
+            var coastingDrag = m_FinalStats.CoastingDrag;
+
+            //if (isBraking)
+            //{
+            //    coastingDrag = m_FinalStats.Braking;
+            //}             
+
+            Vector3 newVelocity;
+            newVelocity = Rigidbody.velocity + movement * Time.fixedDeltaTime;
+          
             newVelocity.y = Rigidbody.velocity.y;
 
             //  clamp max speed if we are on ground
@@ -467,7 +476,14 @@ namespace KartGame.KartSystems
             // coasting is when we aren't touching accelerate
             if (Mathf.Abs(accelInput) < k_NullInput && GroundPercent > 0.0f)
             {
-                newVelocity = Vector3.MoveTowards(newVelocity, new Vector3(0, Rigidbody.velocity.y, 0), Time.fixedDeltaTime * m_FinalStats.CoastingDrag);
+                newVelocity = Vector3.MoveTowards(newVelocity, new Vector3(0, Rigidbody.velocity.y, 0), Time.fixedDeltaTime * coastingDrag);
+            }
+
+            // Apply braking
+            if (brake && GroundPercent > 0.0f)
+            {
+                float brakeForce = m_FinalStats.Braking * Time.fixedDeltaTime;
+                newVelocity = Vector3.MoveTowards(newVelocity, Vector3.zero, brakeForce);
             }
 
             Rigidbody.velocity = newVelocity;
@@ -486,7 +502,7 @@ namespace KartGame.KartSystems
                 float angularVelocitySmoothSpeed = 20f;
 
                 // turning is reversed if we're going in reverse and pressing reverse
-                if (!localVelDirectionIsFwd && !accelDirectionIsFwd)
+                if (!localVelDirectionIsFwd)
                     angularVelocitySteering *= -1.0f;
 
                 var angularVel = Rigidbody.angularVelocity;
