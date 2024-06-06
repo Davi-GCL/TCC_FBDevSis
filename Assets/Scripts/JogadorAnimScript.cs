@@ -42,13 +42,13 @@ public class JogadorAnimScript : MonoBehaviour
 
         if (statePushing == false) 
         {
-            playerTransform.SetLocalPositionAndRotation(_initialPlayerPosition, this.playerTransform.localRotation);
+            //playerTransform.SetLocalPositionAndRotation(_initialPlayerPosition, this.playerTransform.localRotation);
             Debug.Log(_initialPlayerPosition);
             return true;
         }
         else
         {
-            playerTransform.localPosition = new Vector3(sittingPositionX, sittingPositionY, sittingPositionZ);
+            //playerTransform.localPosition = new Vector3(sittingPositionX, sittingPositionY, sittingPositionZ);
             return false;
         }
     }
