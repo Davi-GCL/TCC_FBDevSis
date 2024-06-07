@@ -397,8 +397,30 @@ namespace KartGame.KartSystems
             }
         }
 
-        void OnCollisionEnter(Collision collision) => m_HasCollision = true;
-        void OnCollisionExit(Collision collision) => m_HasCollision = false;
+        void OnCollisionEnter(Collision collision)
+        {
+            m_HasCollision = true;
+            StatPowerup powerup = new StatPowerup();
+
+            if (collision.gameObject.tag == "PowerUp")
+            {
+                if (collision.gameObject.name == "Energetico")
+                {
+                    powerup = new StatPowerup()
+                    {
+                        PowerUpID = "energy",
+                        MaxTime = 10f,
+                        modifiers = new Stats() { TopSpeed = 5f }
+                    };
+                }
+
+                AddPowerup(powerup);
+            }
+        }
+        void OnCollisionExit(Collision collision) 
+        {
+            m_HasCollision = false;
+        }
 
         void OnCollisionStay(Collision collision)
         {
@@ -411,6 +433,7 @@ namespace KartGame.KartSystems
                 if (Vector3.Dot(contact.normal, Vector3.up) > dot)
                     m_LastCollisionNormal = contact.normal;
             }
+
         }
 
         void MoveVehicle(bool accelerate, bool brake, float turnInput)
