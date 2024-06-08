@@ -16,6 +16,8 @@ public class JogadorAnimScript : MonoBehaviour
     private Vector3 _initialPlayerPosition;
 
     private bool isPushing = true;
+    private float impulso = 0;
+    private float initTime;
 
     void Start()
     {
@@ -24,16 +26,28 @@ public class JogadorAnimScript : MonoBehaviour
             playerTransform.localPosition.y, 
             playerTransform.localPosition.z
         );
+        initTime = Time.time;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyUp(KeyCode.F)) 
+        if(Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) 
         {
-            isPushing = ChangePlayerState(isPushing);
+            initTime = Time.time;
+            impulso += impulso < 3f? 0.5f : 0f;
+            isPushing = !isPushing;
+        }
+        else
+        {
+            if ((Time.time - initTime) > 0.5f)
+            {
+                initTime = Time.time;
+                impulso -= impulso > 0 ? 0.5f : 0f;
+            }
         }
         animatorController.SetBool("pushing", isPushing);
+        animatorController.SetFloat("impulso", impulso);
 
     }
 
