@@ -15,9 +15,26 @@ public class JogadorAnimScript : MonoBehaviour
 
     private Vector3 _initialPlayerPosition;
 
-    private bool isPushing = true;
-    private float impulso = 0;
-    private float initTime;
+    [System.Serializable]
+    public class PlayerImpulse
+    {
+        public float Interval = 0.5f;
+        public float MaxAnimMultiplier = 6f;
+        public float AnimMultiplier = 0f;
+        internal float ElapsedTime;
+
+        public void SumAnimMultiplier(float value)
+        {
+            this.AnimMultiplier += this.AnimMultiplier < this.MaxAnimMultiplier? value : 0f;
+        }
+        public void ReduceAnimMultiplier(float value)
+        {
+            this.AnimMultiplier -= this.AnimMultiplier > 0 ? value : 0f;
+            this.AnimMultiplier = this.AnimMultiplier < 0f ? 0f : this.AnimMultiplier;
+        }
+    }
+
+    public PlayerImpulse playerImpulse;
 
     void Start()
     {
@@ -26,7 +43,8 @@ public class JogadorAnimScript : MonoBehaviour
             playerTransform.localPosition.y, 
             playerTransform.localPosition.z
         );
-        initTime = Time.time;
+
+        playerImpulse.ElapsedTime = Time.time;
     }
 
     // Update is called once per frame
@@ -34,20 +52,18 @@ public class JogadorAnimScript : MonoBehaviour
     {
         if(Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) 
         {
-            initTime = Time.time;
-            impulso += impulso < 3f? 0.5f : 0f;
-            isPushing = !isPushing;
+            playerImpulse.ElapsedTime = Time.time;
+            playerImpulse.SumAnimMultiplier(0.5f);
         }
         else
         {
-            if ((Time.time - initTime) > 0.5f)
+            if ((Time.time - playerImpulse.ElapsedTime) > playerImpulse.Interval)
             {
-                initTime = Time.time;
-                impulso -= impulso > 0 ? 0.5f : 0f;
+                playerImpulse.ElapsedTime = Time.time;
+                playerImpulse.ReduceAnimMultiplier(3f);
             }
         }
-        animatorController.SetBool("pushing", isPushing);
-        animatorController.SetFloat("impulso", impulso);
+        animatorController.SetFloat("impulso", playerImpulse.AnimMultiplier);
 
     }
 
