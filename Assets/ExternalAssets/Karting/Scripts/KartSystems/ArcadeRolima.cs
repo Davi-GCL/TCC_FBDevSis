@@ -312,7 +312,7 @@ namespace KartGame.KartSystems
             // apply vehicle physics
             if (m_CanMove)
             {
-                MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
+                MoveVehicle(Input.Brake, Input.TurnInput);
             }
             GroundAirbourne();
 
@@ -412,8 +412,16 @@ namespace KartGame.KartSystems
                     m_LastCollisionNormal = contact.normal;
             }
         }
+        
+        bool accelerate = false;
 
-        void MoveVehicle(bool accelerate, bool brake, float turnInput)
+        public void PlayerPushing(bool isPushing)
+        {
+            accelerate = isPushing;
+            
+        }
+
+        void MoveVehicle(bool brake, float turnInput)
         {
             float accelInput = (accelerate ? 1.0f : 0.0f) - (brake ? 1.0f : 0.0f);
 
@@ -446,14 +454,18 @@ namespace KartGame.KartSystems
 
             Quaternion turnAngle = Quaternion.AngleAxis(turningPower, transform.up);
             Vector3 fwd = turnAngle * transform.forward;
-            Vector3 movement = fwd * accelInput * finalAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
+
+            Vector3 movement = new Vector3();
+
+            if (currentSpeed < maxSpeed)
+                movement = fwd * accelInput * finalAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
 
             // forward movement
             bool wasOverMaxSpeed = currentSpeed >= maxSpeed;
 
             // if over max speed, cannot accelerate faster.
-            if (wasOverMaxSpeed && !isBraking)
-                movement *= 0.0f;
+            //if (wasOverMaxSpeed && !isBraking)
+            //    movement *= 0.0f;
 
             var coastingDrag = m_FinalStats.CoastingDrag;
 
