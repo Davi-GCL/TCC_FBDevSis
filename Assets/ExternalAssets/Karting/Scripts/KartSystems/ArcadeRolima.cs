@@ -181,7 +181,12 @@ namespace KartGame.KartSystems
         bool m_HasCollision;
         bool m_InAir = false;
 
-        public void AddPowerup(StatPowerup statPowerup) => m_ActivePowerupList.Add(statPowerup);
+        public void AddPowerup(StatPowerup statPowerup)
+        {
+            Debug.Log(statPowerup.modifiers.CoastingDrag);
+            m_ActivePowerupList.Add(statPowerup);
+            Debug.Log(m_FinalStats.CoastingDrag);
+        }
         public void SetCanMove(bool move) => m_CanMove = move;
         public float GetMaxSpeed() => Mathf.Max(m_FinalStats.TopSpeed, m_FinalStats.ReverseSpeed);
 
