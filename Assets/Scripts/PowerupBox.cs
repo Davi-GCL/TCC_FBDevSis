@@ -5,7 +5,7 @@ using UnityEngine.Events;
 public class PowerupBox : MonoBehaviour
 {
 
-    public ArcadeRolima.StatPowerup boostStats = new ArcadeRolima.StatPowerup
+    public PowerupItem boostStats = new PowerupItem()
     {
         MaxTime = 10,
         modifiers = { CoastingDrag = 10f }
@@ -36,6 +36,7 @@ public class PowerupBox : MonoBehaviour
                 //finished cooldown!
                 isCoolingDown = false;
                 onPowerupFinishCooldown.Invoke();
+                this.gameObject.SetActive(true);
             }
 
         }
@@ -49,14 +50,17 @@ public class PowerupBox : MonoBehaviour
         var rb = other.attachedRigidbody;
         if (rb)
         {
-            var kart = rb.GetComponent<ArcadeRolima>();
+            //var kart = rb.GetComponent<ArcadeRolima>();
+            var kart = rb.GetComponent<PlayerPowerupInventory>();
 
             if (kart)
             {
                 lastActivatedTimestamp = Time.time;
-                kart.AddPowerup(this.boostStats);
+                //kart.AddPowerup(this.boostStats);
+                kart.StoredItens.Add(this.boostStats);
                 onPowerupActivated.Invoke();
                 isCoolingDown = true;
+
 
                 if (disableGameObjectWhenActivated) this.gameObject.SetActive(false);
             }
