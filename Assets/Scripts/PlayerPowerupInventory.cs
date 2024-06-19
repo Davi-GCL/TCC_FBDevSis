@@ -6,22 +6,29 @@ using UnityEngine;
 
 namespace KartGame.KartSystems
 {
+    [Serializable]
     public class PowerupItem
     {
-        public bool onSelf;
-        public ArcadeRolima.Stats modifiers;
-        public Action PowerupAction;
         public string PowerUpID;
+        public bool onSelf;
         public float ElapsedTime;
         public float MaxTime;
+        public ArcadeRolima.Stats modifiers;
+        public Action PowerupAction;
     }
     public class PlayerPowerupInventory : MonoBehaviour
     {
-        public List<PowerupItem> StoredItens;
+        public IList<PowerupItem> StoredItens = new List<PowerupItem>();
+        [Space]
+        public GameObject ProjectileOrigin;
+        public Transform ProjectilePrefab;
 
+        [Space]
+        public GameObject KartObject;
         public InputData Input { get; private set; }
         // the input sources that can control the kart
         IInput[] m_Inputs;
+
         void Start()
         {
             m_Inputs = GetComponents<IInput>();
@@ -32,11 +39,12 @@ namespace KartGame.KartSystems
         {
             GatherInputs();
 
-            if (Input.UsePowerup) UseStoredPowerup();
+            if (UnityEngine.Input.GetKeyUp(KeyCode.E)) UseStoredPowerup();
         }
 
         void UseStoredPowerup()
         {
+            ThrowProjectile();
             var mainScript = gameObject.GetComponent<ArcadeRolima>();
 
             if (mainScript && StoredItens.Count >= 1)
@@ -46,9 +54,19 @@ namespace KartGame.KartSystems
                     var statPowerUp = ItemToPowerupMap(StoredItens[0]);
                     mainScript.AddPowerup(statPowerUp);
                     StoredItens.RemoveAt(0);
-                    Debug.Log($"USEI O PODER: {statPowerUp.PowerUpID}");
                 }
+                //ThrowProjectile();
             }
+        }
+        void ThrowProjectile()
+        {
+            var originTransform = ProjectileOrigin.transform;
+            var projectileObj = Instantiate(ProjectilePrefab, originTransform.position, originTransform.rotation);
+
+            var originVelocity = KartObject.GetComponent<Rigidbody>().velocity;
+            Debug.Log(originVelocity);
+
+            projectileObj.GetComponent<Rigidbody>().velocity = originVelocity + (originTransform.forward * 15f);
         }
         ArcadeRolima.StatPowerup ItemToPowerupMap(PowerupItem item)
         {

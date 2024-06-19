@@ -52,6 +52,12 @@ namespace KartGame.KartSystems
             [Tooltip("Additional gravity for when the kart is in the air.")]
             public float AddedGravity;
 
+            [Tooltip("Value of player pushing animation speed multiplier limit.")]
+            public float ImpulseAnimMaxSpeed;
+
+            [Tooltip("How quickly player pushing animation accelerate.")]
+            public float ImpulseAnimCurve;
+
             // allow for stat adding for powerups.
             public static Stats operator +(Stats a, Stats b)
             {
@@ -67,6 +73,8 @@ namespace KartGame.KartSystems
                     ReverseSpeed = a.ReverseSpeed + b.ReverseSpeed,
                     TopSpeed = a.TopSpeed + b.TopSpeed,
                     Steer = a.Steer + b.Steer,
+                    ImpulseAnimMaxSpeed = a.ImpulseAnimMaxSpeed + b.ImpulseAnimMaxSpeed,
+                    ImpulseAnimCurve = a.ImpulseAnimCurve + b.ImpulseAnimCurve
                 };
             }
         }
@@ -88,6 +96,8 @@ namespace KartGame.KartSystems
             CoastingDrag = 4f,
             Grip = .95f,
             AddedGravity = 1f,
+            ImpulseAnimMaxSpeed = 8f,
+            ImpulseAnimCurve = 0.5f
         };
 
         [Header("Vehicle Visual")]
@@ -173,7 +183,7 @@ namespace KartGame.KartSystems
         // can the kart move?
         bool m_CanMove = true;
         List<StatPowerup> m_ActivePowerupList = new List<StatPowerup>();
-        ArcadeRolima.Stats m_FinalStats;
+        public ArcadeRolima.Stats m_FinalStats;
 
         Quaternion m_LastValidRotation;
         Vector3 m_LastValidPosition;
@@ -183,9 +193,9 @@ namespace KartGame.KartSystems
 
         public void AddPowerup(StatPowerup statPowerup)
         {
-            Debug.Log(statPowerup.modifiers.CoastingDrag);
+            Debug.Log("Powerup adicionado");
             m_ActivePowerupList.Add(statPowerup);
-            Debug.Log(m_FinalStats.CoastingDrag);
+            Debug.Log(m_FinalStats.ImpulseAnimMaxSpeed);
         }
         public void SetCanMove(bool move) => m_CanMove = move;
         public float GetMaxSpeed() => Mathf.Max(m_FinalStats.TopSpeed, m_FinalStats.ReverseSpeed);

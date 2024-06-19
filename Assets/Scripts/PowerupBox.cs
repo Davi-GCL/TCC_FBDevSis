@@ -1,16 +1,17 @@
 using KartGame.KartSystems;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
 public class PowerupBox : MonoBehaviour
 {
 
     public PowerupItem boostStats = new PowerupItem()
     {
-        MaxTime = 10,
-        modifiers = { CoastingDrag = 10f }
+        MaxTime = 10
     };
-
     public bool isCoolingDown { get; private set; }
     public float lastActivatedTimestamp { get; private set; }
 
@@ -20,9 +21,27 @@ public class PowerupBox : MonoBehaviour
     public UnityEvent onPowerupActivated;
     public UnityEvent onPowerupFinishCooldown;
 
+    private IList<PowerupItem> AllPowerupsList = new List<PowerupItem>()
+    {
+        new PowerupItem()
+        {
+            PowerUpID = "1",
+            MaxTime = 3,
+            onSelf = true,
+            modifiers = new ArcadeRolima.Stats
+            {
+                TopSpeed = 5,
+                ImpulseAnimMaxSpeed = 4f,
+                ImpulseAnimCurve = 4f
+            }
+        }
+    };
+
     private void Awake()
     {
         lastActivatedTimestamp = -9999f;
+
+        this.boostStats = SortRandomItem<PowerupItem>(AllPowerupsList);
     }
 
 
@@ -67,4 +86,11 @@ public class PowerupBox : MonoBehaviour
         }
     }
 
+    T SortRandomItem<T>(IList<T> itemList)
+    {
+        var max = itemList.Count;
+        var index = new System.Random().Next(0, max);
+
+        return itemList[index];
+    }
 }

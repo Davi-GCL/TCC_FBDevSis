@@ -9,18 +9,21 @@ public class JogadorAnimScript : MonoBehaviour
     public Animator animatorController;
     public Transform playerTransform;
     [Space]
-    public GameObject kartObject;
-
-    private Vector3 _initialPlayerPosition;
+    public ArcadeRolima kartScript;
 
     [System.Serializable]
     public class PlayerImpulse
     {
         public float Interval = 0.5f;
         public float MaxAnimMultiplier = 6f;
+        public float AnimSpeedCurve = 0.5f;
         public float AnimMultiplier = 0f;
         internal float ElapsedTime;
-
+        public void SetAnimSpeed(float curve, float max)
+        {
+            this.AnimSpeedCurve = curve;
+            this.MaxAnimMultiplier = max;
+        }
         public void SumAnimMultiplier(float value)
         {
             this.AnimMultiplier += this.AnimMultiplier < this.MaxAnimMultiplier ? value : 0f;
@@ -39,12 +42,6 @@ public class JogadorAnimScript : MonoBehaviour
 
     void Start()
     {
-        _initialPlayerPosition = new Vector3(
-            playerTransform.localPosition.x,
-            playerTransform.localPosition.y,
-            playerTransform.localPosition.z
-        );
-
         playerImpulse.ElapsedTime = Time.time;
     }
 
@@ -53,17 +50,24 @@ public class JogadorAnimScript : MonoBehaviour
     {
         //GatherInputs();
 
+        if (kartScript != null)
+        {
+            var curve = kartScript.m_FinalStats.ImpulseAnimCurve;
+            var maxSpeed = kartScript.m_FinalStats.ImpulseAnimMaxSpeed;
+            playerImpulse.SetAnimSpeed(curve, maxSpeed);
+        }
+
         if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) 
         {
             playerImpulse.ElapsedTime = Time.time;
-            playerImpulse.SumAnimMultiplier(0.5f);
+            playerImpulse.SumAnimMultiplier(playerImpulse.AnimSpeedCurve);
         }
         else
         {
             if ((Time.time - playerImpulse.ElapsedTime) > playerImpulse.Interval)
             {
                 playerImpulse.ElapsedTime = Time.time;
-                playerImpulse.ReduceAnimMultiplier(3f);
+                playerImpulse.ReduceAnimMultiplier((playerImpulse.MaxAnimMultiplier / 2));
             }
         }
         animatorController.SetFloat("impulso", playerImpulse.AnimMultiplier);
@@ -72,16 +76,16 @@ public class JogadorAnimScript : MonoBehaviour
 
     public void TriggerHandOnGround()
     {
-        if(kartObject is not null)
+        if(kartScript is not null)
             StartCoroutine(NotifyPushActionCoroutine());
     }
     IEnumerator NotifyPushActionCoroutine()
     {
-        kartObject.gameObject.SendMessage("PlayerPushing", true);
+        kartScript.SendMessage("PlayerPushing", true);
 
         yield return new WaitForSeconds(0.1f);
 
-        kartObject.gameObject.SendMessage("PlayerPushing", false);
+        kartScript.SendMessage("PlayerPushing", false);
     }
     public void ExitHandOnGround()
     {
