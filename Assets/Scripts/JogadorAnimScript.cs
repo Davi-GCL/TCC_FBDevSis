@@ -10,6 +10,7 @@ public class JogadorAnimScript : MonoBehaviour
     public Transform playerTransform;
     [Space]
     public ArcadeRolima kartScript;
+    public PlayerPowerupInventory playerPowerupInventory;
 
     [System.Serializable]
     public class PlayerImpulse
@@ -57,7 +58,7 @@ public class JogadorAnimScript : MonoBehaviour
             playerImpulse.SetAnimSpeed(curve, maxSpeed);
         }
 
-        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow)) 
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.UpArrow))
         {
             playerImpulse.ElapsedTime = Time.time;
             playerImpulse.SumAnimMultiplier(playerImpulse.AnimSpeedCurve);
@@ -76,7 +77,7 @@ public class JogadorAnimScript : MonoBehaviour
 
     public void TriggerHandOnGround()
     {
-        if(kartScript is not null)
+        if (kartScript is not null)
             StartCoroutine(NotifyPushActionCoroutine());
     }
     IEnumerator NotifyPushActionCoroutine()
@@ -86,6 +87,10 @@ public class JogadorAnimScript : MonoBehaviour
         yield return new WaitForSeconds(0.1f);
 
         kartScript.SendMessage("PlayerPushing", false);
+    }
+    public void TriggerHandReleaseItem()
+    {
+        playerPowerupInventory.SendMessage("ReleaseItem");
     }
     public void ExitHandOnGround()
     {

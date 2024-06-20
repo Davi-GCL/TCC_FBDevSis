@@ -29,6 +29,7 @@ namespace KartGame.KartSystems
         // the input sources that can control the kart
         IInput[] m_Inputs;
 
+        public Animator AnimatorController;
         void Start()
         {
             m_Inputs = GetComponents<IInput>();
@@ -44,7 +45,7 @@ namespace KartGame.KartSystems
 
         void UseStoredPowerup()
         {
-            ThrowProjectile();
+            UseThrowable();
             var mainScript = gameObject.GetComponent<ArcadeRolima>();
 
             if (mainScript && StoredItens.Count >= 1)
@@ -55,10 +56,15 @@ namespace KartGame.KartSystems
                     mainScript.AddPowerup(statPowerUp);
                     StoredItens.RemoveAt(0);
                 }
-                //ThrowProjectile();
+                //UseThrowable();
             }
         }
-        void ThrowProjectile()
+        void UseThrowable()
+        {
+            
+            AnimatorController.SetBool("arremessando", true);
+        }
+        void ReleaseItem()
         {
             var originTransform = ProjectileOrigin.transform;
             var projectileObj = Instantiate(ProjectilePrefab, originTransform.position, originTransform.rotation);
@@ -67,6 +73,9 @@ namespace KartGame.KartSystems
             Debug.Log(originVelocity);
 
             projectileObj.GetComponent<Rigidbody>().velocity = originVelocity + (originTransform.forward * 15f);
+
+     
+            AnimatorController.SetBool("arremessando", false);
         }
         ArcadeRolima.StatPowerup ItemToPowerupMap(PowerupItem item)
         {
