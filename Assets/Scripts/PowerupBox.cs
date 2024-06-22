@@ -58,7 +58,7 @@ public class PowerupBox : MonoBehaviour
     private void Start()
     {
         //this.boostStats = SortRandomItem<PowerupItem>(AllPowerupsList);
-        this.boostStats = AllPowerupsList.Find(x => x.PowerUpID == "2");
+        this.boostStats = AllPowerupsList.Find(x => x.PowerUpID == "3");
         Debug.Log($"Item sorteado {this.boostStats.PowerUpID}");
     }
 

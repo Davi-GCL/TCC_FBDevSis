@@ -7,10 +7,23 @@ namespace KartGame.KartSystems
     public class Projectile : MonoBehaviour
     {
         public string id;
-        // Start is called before the first frame update
-        void Start()
+        public float ActivationDelay = 2f;
+
+        private float StartTime;
+
+        void Awake()
         {
             Destroy(gameObject, 10f);
+            GetComponent<SphereCollider>().enabled = false;
+            this.StartTime = Time.time;
+        }
+
+        private void Update()
+        {
+            if((Time.time - StartTime) > this.ActivationDelay)
+            {
+                GetComponent<SphereCollider>().enabled = true;
+            }
         }
 
         void DestroyImmediately(GameObject go)
