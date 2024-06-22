@@ -21,12 +21,13 @@ public class PowerupBox : MonoBehaviour
     public UnityEvent onPowerupActivated;
     public UnityEvent onPowerupFinishCooldown;
 
-    private IList<PowerupItem> AllPowerupsList = new List<PowerupItem>()
+    [Space]
+    public List<PowerupItem> AllPowerupsList = new List<PowerupItem>()
     {
         new PowerupItem()
         {
             PowerUpID = "1",
-            MaxTime = 3,
+            MaxTime = 5,
             onSelf = true,
             modifiers = new ArcadeRolima.Stats
             {
@@ -34,16 +35,27 @@ public class PowerupBox : MonoBehaviour
                 ImpulseAnimMaxSpeed = 4f,
                 ImpulseAnimCurve = 4f
             }
+        },
+        new PowerupItem()
+        {
+            PowerUpID = "2",
+            MaxTime = 5,
+            onSelf = false,
+            
         }
     };
 
     private void Awake()
     {
         lastActivatedTimestamp = -9999f;
-
-        this.boostStats = SortRandomItem<PowerupItem>(AllPowerupsList);
     }
 
+    private void Start()
+    {
+        //this.boostStats = SortRandomItem<PowerupItem>(AllPowerupsList);
+        this.boostStats = AllPowerupsList.Find(x => x.PowerUpID == "2");
+        Debug.Log($"Item sorteado {this.boostStats.PowerUpID}");
+    }
 
     private void Update()
     {
@@ -89,7 +101,7 @@ public class PowerupBox : MonoBehaviour
     T SortRandomItem<T>(IList<T> itemList)
     {
         var max = itemList.Count;
-        var index = new System.Random().Next(0, max);
+        var index = new System.Random().Next(-1, max);
 
         return itemList[index];
     }

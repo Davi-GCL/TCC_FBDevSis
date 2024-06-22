@@ -14,6 +14,7 @@ namespace KartGame.KartSystems
         public float ElapsedTime;
         public float MaxTime;
         public ArcadeRolima.Stats modifiers;
+        public Transform ProjectilePrefab;
         public Action PowerupAction;
     }
     public class PlayerPowerupInventory : MonoBehaviour
@@ -45,29 +46,36 @@ namespace KartGame.KartSystems
 
         void UseStoredPowerup()
         {
-            UseThrowable();
             var mainScript = gameObject.GetComponent<ArcadeRolima>();
 
             if (mainScript && StoredItens.Count >= 1)
             {
                 if (StoredItens[0].onSelf)
                 {
+                    Debug.Log($"Usei o item:{StoredItens[0].PowerUpID}");
                     var statPowerUp = ItemToPowerupMap(StoredItens[0]);
                     mainScript.AddPowerup(statPowerUp);
-                    StoredItens.RemoveAt(0);
                 }
-                //UseThrowable();
+                else
+                {
+                    this.CurrentItem = StoredItens[0];
+                    UseThrowable();
+                }
+                StoredItens.RemoveAt(0);
             }
         }
         void UseThrowable()
         {
-            
             AnimatorController.SetBool("arremessando", true);
         }
+        private PowerupItem CurrentItem;
+        //Chamado pelo JogadorAnimScript.TriggerHandReleaseItem() quando a animação de arremesso ativa o evento 
         void ReleaseItem()
         {
             var originTransform = ProjectileOrigin.transform;
-            var projectileObj = Instantiate(ProjectilePrefab, originTransform.position, originTransform.rotation);
+            var projectileObj = Instantiate(CurrentItem.ProjectilePrefab, originTransform.position, originTransform.rotation);
+            
+            projectileObj.GetComponent<Projectile>().id = CurrentItem.PowerUpID;
 
             var originVelocity = KartObject.GetComponent<Rigidbody>().velocity;
             Debug.Log(originVelocity);

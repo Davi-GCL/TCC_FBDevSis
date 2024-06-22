@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.VFX;
+using System.Collections;
 
 namespace KartGame.KartSystems
 {
@@ -427,7 +428,32 @@ namespace KartGame.KartSystems
                     m_LastCollisionNormal = contact.normal;
             }
         }
-        
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.name.ToLower().Contains("banana"))
+            {
+                Debug.Log("ESCOREGOU NA BANANINHA");
+                StartCoroutine(BananaEffectOnCar(1.5f, other.gameObject));
+            }
+        }
+        //Metodo que é chamado quando o jogador colide com uma casca de banana
+        private IEnumerator BananaEffectOnCar(float rotationSpeed, GameObject collisionObj)
+        {
+            Destroy(collisionObj);
+            
+            transform.position += new Vector3(0, 1f);
+            
+            float angle = 0f;
+            while (angle < 360f)
+            {
+                float rotationStep = rotationSpeed * Time.deltaTime * 360f;
+                transform.Rotate(Vector3.up, rotationStep);
+                angle += rotationStep;
+                yield return null;
+            }
+        }
+
         bool accelerate = false;
 
         public void PlayerPushing(bool isPushing)
