@@ -192,6 +192,8 @@ namespace KartGame.KartSystems
         bool m_HasCollision;
         bool m_InAir = false;
 
+        public float TurnInputModifier = 1f;
+
         public void AddPowerup(StatPowerup statPowerup)
         {
             Debug.Log("Powerup adicionado");
@@ -328,7 +330,7 @@ namespace KartGame.KartSystems
             // apply vehicle physics
             if (m_CanMove)
             {
-                MoveVehicle(Input.Brake, Input.TurnInput);
+                MoveVehicle(Input.Brake, Input.TurnInput * this.TurnInputModifier);
             }
             GroundAirbourne();
 
@@ -436,6 +438,11 @@ namespace KartGame.KartSystems
                 Debug.Log("ESCOREGOU NA BANANINHA");
                 StartCoroutine(BananaEffectOnCar(1.5f, other.gameObject));
             }
+            if (other.gameObject.name.ToLower().Contains("nausea"))
+            {
+                Debug.Log("PEGO PELA NAUSEA");
+                StartCoroutine(NauseaEffectOnCar());
+            }
         }
         //Metodo que é chamado quando o jogador colide com uma casca de banana
         private IEnumerator BananaEffectOnCar(float rotationSpeed, GameObject collisionObj)
@@ -452,6 +459,14 @@ namespace KartGame.KartSystems
                 angle += rotationStep;
                 yield return null;
             }
+        }
+        private IEnumerator NauseaEffectOnCar()
+        {
+            this.TurnInputModifier = -1;
+
+            yield return new WaitForSeconds(5f);
+
+            this.TurnInputModifier = 1f;
         }
 
         bool accelerate = false;

@@ -40,8 +40,13 @@ public class PowerupBox : MonoBehaviour
         {
             PowerUpID = "2",
             MaxTime = 5,
-            onSelf = false,
-            
+            onSelf = false
+        },
+        new PowerupItem()
+        {
+            PowerUpID = "3",
+            MaxTime = 5,
+            onSelf = false
         }
     };
 
