@@ -51,7 +51,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8337941459145552058}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -2218,22 +2218,22 @@ PrefabInstance:
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 155.97
+      value: 57.18
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 79.98
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -276.94
+      value: 9.824433
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
@@ -2243,7 +2243,7 @@ PrefabInstance:
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
@@ -2258,12 +2258,17 @@ PrefabInstance:
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5912518991262905096, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6659622755694472194, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
         type: 3}
@@ -2466,6 +2471,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2926482003839197123}
+    - targetCorrespondingSourceObject: {fileID: 6783739995382953304, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3330690469594041297}
   m_SourcePrefab: {fileID: 100100000, guid: 17255ff151d0cb14088bb6e70c2f7b4f, type: 3}
 --- !u!1 &913498878518312175 stripped
 GameObject:
@@ -2485,6 +2494,24 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 5075399088411614451}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1750738075810834859 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6783739995382953304, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
+    type: 3}
+  m_PrefabInstance: {fileID: 5075399088411614451}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3330690469594041297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1750738075810834859}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373ede766635155409475b0d193794de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3049732738551521993 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7799569697747484218, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
@@ -2541,7 +2568,7 @@ MonoBehaviour:
     AccelerationCurve: 1
     Braking: 5
     CoastingDrag: -2
-    OffTrackCoastingDrag: 0
+    OffTrackCoastingDrag: 2
     Grip: 0.95
     Steer: 3
     AddedGravity: 1
@@ -2645,10 +2672,10 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.3539429, y: 0.32948303, z: 1.9974365}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.3539429, y: 0.25333855, z: 1.9974365}
+  m_Center: {x: 0, y: 0.2445987, z: 0}
 --- !u!4 &7870587279694454963 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3122826305825471552, guid: 17255ff151d0cb14088bb6e70c2f7b4f,
