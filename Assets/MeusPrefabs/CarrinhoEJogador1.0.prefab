@@ -246,7 +246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf3122a730a47e24f9811b7c421674b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  kartController: {fileID: 3672646122611935445}
+  kartController: {fileID: 0}
   steeringAnimationDamping: 10
   maxSteeringAngle: 45
   maxSteeringAngleAxis: 30
@@ -1041,7 +1041,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 6507035369614096990}
+  - {fileID: 434777490229652359}
   - {fileID: 8100478679130939120}
   m_Father: {fileID: 7083969699372534443}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1057,7 +1057,7 @@ GameObject:
   - component: {fileID: 7055693668689729329}
   - component: {fileID: 1003312158461074558}
   m_Layer: 2
-  m_Name: EixoD
+  m_Name: EixoDianteiro
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1071,14 +1071,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4104903614464771045}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.313, z: -2.603}
-  m_LocalScale: {x: 0.49495116, y: 0.48987415, z: 0.55294937}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.31300133, z: -2.8579867}
+  m_LocalScale: {x: 0.4949511, y: 0.48987415, z: 0.55294937}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 9116541798726734132}
   - {fileID: 348609469256679792}
-  m_Father: {fileID: 6507035369614096990}
+  m_Father: {fileID: 2461961097872483840}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!33 &7055693668689729329
 MeshFilter:
@@ -1879,38 +1879,6 @@ WheelCollider:
   m_LayerOverridePriority: 0
   m_Enabled: 1
   m_ProvidesContacts: 0
---- !u!1 &7032211696809968936
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 6507035369614096990}
-  m_Layer: 0
-  m_Name: EixoDianteiro
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &6507035369614096990
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7032211696809968936}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.255}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 434777490229652359}
-  m_Father: {fileID: 2461961097872483840}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7152227137006510320
 GameObject:
   m_ObjectHideFlags: 0
@@ -2519,6 +2487,10 @@ MonoBehaviour:
   sittingPositionX: 0
   sittingPositionY: -0.001
   sittingPositionZ: -0.405
+  playerImpulse:
+    Interval: 0.5
+    MaxAnimMultiplier: 6
+    AnimMultiplier: 0
 --- !u!4 &7567780906315585538 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 75e893d59d4f52440a2763ca80f42a6e,

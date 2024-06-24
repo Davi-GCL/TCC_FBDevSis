@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.VFX;
+using System.Collections;
 
 namespace KartGame.KartSystems
 {
@@ -52,6 +53,12 @@ namespace KartGame.KartSystems
             [Tooltip("Additional gravity for when the kart is in the air.")]
             public float AddedGravity;
 
+            [Tooltip("Value of player pushing animation speed multiplier limit.")]
+            public float ImpulseAnimMaxSpeed;
+
+            [Tooltip("How quickly player pushing animation accelerate.")]
+            public float ImpulseAnimCurve;
+
             // allow for stat adding for powerups.
             public static Stats operator +(Stats a, Stats b)
             {
@@ -67,6 +74,8 @@ namespace KartGame.KartSystems
                     ReverseSpeed = a.ReverseSpeed + b.ReverseSpeed,
                     TopSpeed = a.TopSpeed + b.TopSpeed,
                     Steer = a.Steer + b.Steer,
+                    ImpulseAnimMaxSpeed = a.ImpulseAnimMaxSpeed + b.ImpulseAnimMaxSpeed,
+                    ImpulseAnimCurve = a.ImpulseAnimCurve + b.ImpulseAnimCurve
                 };
             }
         }
@@ -88,6 +97,8 @@ namespace KartGame.KartSystems
             CoastingDrag = 4f,
             Grip = .95f,
             AddedGravity = 1f,
+            ImpulseAnimMaxSpeed = 8f,
+            ImpulseAnimCurve = 0.5f
         };
 
         [Header("Vehicle Visual")]
@@ -173,7 +184,7 @@ namespace KartGame.KartSystems
         // can the kart move?
         bool m_CanMove = true;
         List<StatPowerup> m_ActivePowerupList = new List<StatPowerup>();
-        ArcadeRolima.Stats m_FinalStats;
+        public ArcadeRolima.Stats m_FinalStats;
 
         Quaternion m_LastValidRotation;
         Vector3 m_LastValidPosition;
@@ -181,7 +192,14 @@ namespace KartGame.KartSystems
         bool m_HasCollision;
         bool m_InAir = false;
 
-        public void AddPowerup(StatPowerup statPowerup) => m_ActivePowerupList.Add(statPowerup);
+        public float TurnInputModifier = 1f;
+
+        public void AddPowerup(StatPowerup statPowerup)
+        {
+            Debug.Log("Powerup adicionado");
+            m_ActivePowerupList.Add(statPowerup);
+            Debug.Log(m_FinalStats.ImpulseAnimMaxSpeed);
+        }
         public void SetCanMove(bool move) => m_CanMove = move;
         public float GetMaxSpeed() => Mathf.Max(m_FinalStats.TopSpeed, m_FinalStats.ReverseSpeed);
 
@@ -312,7 +330,7 @@ namespace KartGame.KartSystems
             // apply vehicle physics
             if (m_CanMove)
             {
-                MoveVehicle(Input.Accelerate, Input.Brake, Input.TurnInput);
+                MoveVehicle(Input.Brake, Input.TurnInput * this.TurnInputModifier);
             }
             GroundAirbourne();
 
@@ -413,7 +431,53 @@ namespace KartGame.KartSystems
             }
         }
 
-        void MoveVehicle(bool accelerate, bool brake, float turnInput)
+        private void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.name.ToLower().Contains("banana"))
+            {
+                Debug.Log("ESCOREGOU NA BANANINHA");
+                StartCoroutine(BananaEffectOnCar(1.5f, other.gameObject));
+            }
+            if (other.gameObject.name.ToLower().Contains("nausea"))
+            {
+                Debug.Log("PEGO PELA NAUSEA");
+                StartCoroutine(NauseaEffectOnCar());
+            }
+        }
+        //Metodo que é chamado quando o jogador colide com uma casca de banana
+        private IEnumerator BananaEffectOnCar(float rotationSpeed, GameObject collisionObj)
+        {
+            Destroy(collisionObj);
+            
+            transform.position += new Vector3(0, 1f);
+            
+            float angle = 0f;
+            while (angle < 360f)
+            {
+                float rotationStep = rotationSpeed * Time.deltaTime * 360f;
+                transform.Rotate(Vector3.up, rotationStep);
+                angle += rotationStep;
+                yield return null;
+            }
+        }
+        private IEnumerator NauseaEffectOnCar()
+        {
+            this.TurnInputModifier = -1;
+
+            yield return new WaitForSeconds(5f);
+
+            this.TurnInputModifier = 1f;
+        }
+
+        bool accelerate = false;
+
+        public void PlayerPushing(bool isPushing)
+        {
+            accelerate = isPushing;
+            
+        }
+
+        void MoveVehicle(bool brake, float turnInput)
         {
             float accelInput = (accelerate ? 1.0f : 0.0f) - (brake ? 1.0f : 0.0f);
 
@@ -446,14 +510,18 @@ namespace KartGame.KartSystems
 
             Quaternion turnAngle = Quaternion.AngleAxis(turningPower, transform.up);
             Vector3 fwd = turnAngle * transform.forward;
-            Vector3 movement = fwd * accelInput * finalAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
+
+            Vector3 movement = new Vector3();
+
+            if (currentSpeed < maxSpeed)
+                movement = fwd * accelInput * finalAcceleration * ((m_HasCollision || GroundPercent > 0.0f) ? 1.0f : 0.0f);
 
             // forward movement
             bool wasOverMaxSpeed = currentSpeed >= maxSpeed;
 
             // if over max speed, cannot accelerate faster.
-            if (wasOverMaxSpeed && !isBraking)
-                movement *= 0.0f;
+            //if (wasOverMaxSpeed && !isBraking)
+            //    movement *= 0.0f;
 
             var coastingDrag = m_FinalStats.CoastingDrag;
 

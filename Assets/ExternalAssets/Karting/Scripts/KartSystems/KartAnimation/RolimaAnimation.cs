@@ -74,12 +74,12 @@ namespace KartGame.KartSystems
             frontRightWheel?.Setup();
             rearLeftWheel?.Setup();
             rearRightWheel?.Setup();
-            frontAxis.Setup();
+            frontAxis?.Setup();
         }
 
         void FixedUpdate()
         {
-            m_SmoothedSteeringInput = Mathf.MoveTowards(m_SmoothedSteeringInput, kartController.Input.TurnInput,
+            m_SmoothedSteeringInput = Mathf.MoveTowards(m_SmoothedSteeringInput, (kartController.Input.TurnInput * kartController.TurnInputModifier),
                 steeringAnimationDamping * Time.deltaTime);
 
             // Steer front wheels
@@ -91,7 +91,8 @@ namespace KartGame.KartSystems
             float rotationAngleAxis = m_SmoothedSteeringInput * maxSteeringAngleAxis;
             rotationAngleAxis = Math.Clamp(rotationAngleAxis, -30f, 30f);
 
-            frontAxis.axisTransform.localRotation = Quaternion.Euler(new Vector3(0f, rotationAngleAxis, 0f));
+            var rotationEulerFA = frontAxis.axisTransform.localRotation.eulerAngles;
+            frontAxis.axisTransform.localRotation = Quaternion.Euler(new Vector3(rotationEulerFA.x, rotationAngleAxis, rotationEulerFA.z));
             //frontAxis.axisTransform.localRotation.SetEulerAngles();
 
             // Update position and rotation from WheelCollider
