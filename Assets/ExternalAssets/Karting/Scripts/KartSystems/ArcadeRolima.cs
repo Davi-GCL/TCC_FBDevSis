@@ -43,6 +43,9 @@ namespace KartGame.KartSystems
             [Tooltip("How quickly the kart will reach a full stop when no inputs are made.")]
             public float CoastingDrag;
 
+            [Tooltip("How quickly the kart will reach a full stop at OffRoad when no inputs are made.")]
+            public float OffTrackCoastingDrag;
+
             [Range(0.0f, 1.0f)]
             [Tooltip("The amount of side-to-side friction.")]
             public float Grip;
@@ -68,6 +71,7 @@ namespace KartGame.KartSystems
                     AccelerationCurve = a.AccelerationCurve + b.AccelerationCurve,
                     Braking = a.Braking + b.Braking,
                     CoastingDrag = a.CoastingDrag + b.CoastingDrag,
+                    OffTrackCoastingDrag = a.OffTrackCoastingDrag + b.OffTrackCoastingDrag,
                     AddedGravity = a.AddedGravity + b.AddedGravity,
                     Grip = a.Grip + b.Grip,
                     ReverseAcceleration = a.ReverseAcceleration + b.ReverseAcceleration,
@@ -94,7 +98,8 @@ namespace KartGame.KartSystems
             ReverseAcceleration = 5f,
             ReverseSpeed = 5f,
             Steer = 5f,
-            CoastingDrag = 4f,
+            CoastingDrag = -1f,
+            OffTrackCoastingDrag = 1.5f,
             Grip = .95f,
             AddedGravity = 1f,
             ImpulseAnimMaxSpeed = 8f,
@@ -260,6 +265,7 @@ namespace KartGame.KartSystems
             UpdateSuspensionParams(RearRightWheel);
 
             m_CurrentGrip = baseStats.Grip;
+            m_FinalStats = baseStats;
 
             if (DriftSparkVFX != null)
             {
@@ -374,7 +380,8 @@ namespace KartGame.KartSystems
             }
 
             // add powerups to our final stats
-            m_FinalStats = baseStats + powerups;
+            if(m_ActivePowerupList.Count > 0)
+                m_FinalStats = baseStats + powerups;
 
             // clamp values in finalstats
             m_FinalStats.Grip = Mathf.Clamp(m_FinalStats.Grip, 0, 1);
@@ -415,7 +422,11 @@ namespace KartGame.KartSystems
             }
         }
 
-        void OnCollisionEnter(Collision collision) => m_HasCollision = true;
+
+        void OnCollisionEnter(Collision collision)
+        {
+            m_HasCollision = true;            
+        }
         void OnCollisionExit(Collision collision) => m_HasCollision = false;
 
         void OnCollisionStay(Collision collision)
@@ -431,8 +442,11 @@ namespace KartGame.KartSystems
             }
         }
 
+        private bool IsOffTracking = false;
+        private bool IsOnTracking = false;
         private void OnTriggerEnter(Collider other)
         {
+            Debug.Log(other.gameObject.tag);
             if (other.gameObject.name.ToLower().Contains("banana"))
             {
                 Debug.Log("ESCOREGOU NA BANANINHA");
@@ -442,6 +456,22 @@ namespace KartGame.KartSystems
             {
                 Debug.Log("PEGO PELA NAUSEA");
                 StartCoroutine(NauseaEffectOnCar());
+            }
+            if (other.gameObject.name.ToLower().Contains("boost"))
+            {
+                Debug.Log("BOOST PAD");
+                BoostPadEffectOnCar();
+            }
+            //Verifica terreno
+            if (other.gameObject.CompareTag("OffTrack"))
+            {
+                Debug.Log("ENTROU NA TERRA");
+                IsOffTracking = true;
+            }
+            if (other.gameObject.CompareTag("RoadTrack"))
+            {
+                Debug.Log("ENTROU NA ESTRADA");
+                IsOnTracking = true;
             }
         }
         //Metodo que é chamado quando o jogador colide com uma casca de banana
@@ -468,14 +498,40 @@ namespace KartGame.KartSystems
 
             this.TurnInputModifier = 1f;
         }
+        private void BoostPadEffectOnCar()
+        {
+            if(this.m_ActivePowerupList.Exists(p => p.PowerUpID.Equals("15"))) return;
+
+            float turningPower = IsDrifting ? m_DriftTurningPower : Input.TurnInput * m_FinalStats.Steer;
+            Quaternion turnAngle = Quaternion.AngleAxis(turningPower, transform.up);
+            Vector3 fwd = turnAngle * transform.forward;
+
+            Rigidbody.velocity += (fwd * 10f);
+
+            AddPowerup(new StatPowerup()
+            {
+                PowerUpID = "15",
+                MaxTime = 2f,
+                modifiers =
+                {
+                    Grip = -0.8f
+                }
+            });
+            Debug.Log(m_FinalStats.Grip.ToString());
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.gameObject.CompareTag("OffTrack")) IsOffTracking = false;
+            if (other.gameObject.CompareTag("RoadTrack")) IsOnTracking = false;
+            
+            Debug.Log($"Saiu de {other.tag}");
+        }
 
         bool accelerate = false;
 
-        public void PlayerPushing(bool isPushing)
-        {
-            accelerate = isPushing;
-            
-        }
+        public void PlayerPushing(bool isPushing) => accelerate = isPushing;
+
 
         void MoveVehicle(bool brake, float turnInput)
         {
@@ -523,7 +579,7 @@ namespace KartGame.KartSystems
             //if (wasOverMaxSpeed && !isBraking)
             //    movement *= 0.0f;
 
-            var coastingDrag = m_FinalStats.CoastingDrag;
+            var coastingDrag = IsOffTracking && !IsOnTracking ? m_FinalStats.OffTrackCoastingDrag : m_FinalStats.CoastingDrag;
 
             //if (isBraking)
             //{
